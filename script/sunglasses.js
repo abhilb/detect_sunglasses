@@ -4,6 +4,7 @@ let ctx;
 let video;
 let videoHeight;
 let videoWidth;
+let canvas;
 
 const renderPrediction = async () => {
 
@@ -31,7 +32,7 @@ const renderPrediction = async () => {
       console.log(start);
       console.log(end);
       console.log(size);
-      
+
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
       ctx.fillRect(start[0], start[1], size[0], size[1]);
 
