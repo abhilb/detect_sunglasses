@@ -43,7 +43,10 @@ const renderPrediction = async () => {
       }
     }
   }
-
+  else
+  {
+    console.log("No faces found");
+  }
 
   requestAnimationFrame(renderPrediction);
 };
