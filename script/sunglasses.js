@@ -2,6 +2,8 @@
 let model;
 let ctx;
 let video;
+let videoHeight;
+let videoWidth;
 
 const renderPrediction = async () => {
 
@@ -64,7 +66,9 @@ const startup = () => {
     .then(function(stream) {
       video.srcObject = stream;
       video.play();
-
+          
+      videoWidth = video.videoWidth;
+      videoHeight = video.videoHeight;
       video.width = videoWidth;
       video.height = videoHeight;
     
