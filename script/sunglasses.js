@@ -74,11 +74,11 @@ const startup = () => {
       ctx = canvas.getContext('2d');
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
 
-      $("#local-video-error").html("No error");
+      console.log("Now load the model");
       main();
     })
     .catch(function(err) {      
-        $("#local-video-error").html("Got an error : " + err);
+        console.log(err);
     });
   
     video.addEventListener('canplay', function(ev){
