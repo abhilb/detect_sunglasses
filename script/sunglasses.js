@@ -28,6 +28,10 @@ const renderPrediction = async () => {
       const start = predictions[i].topLeft;
       const end = predictions[i].bottomRight;
       const size = [end[0] - start[0], end[1] - start[1]];
+      console.log(start);
+      console.log(end);
+      console.log(size);
+      
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
       ctx.fillRect(start[0], start[1], size[0], size[1]);
 
