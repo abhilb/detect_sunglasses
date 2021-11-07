@@ -4,7 +4,7 @@ let ctx;
 async function main() {
   // Load the model.
   const model = await blazeface.load();
-
+  console.log("Loaded the model");
   // Pass in an image or video to the model. The model returns an array of
   // bounding boxes, probabilities, and landmarks, one for each detected face.
 
@@ -41,6 +41,9 @@ async function main() {
       ctx.fillRect(start[0], start[1], size[0], size[1]);
     }
   }
+  else{
+    console.log("No faces found");
+  }
 }
   
 
@@ -64,7 +67,7 @@ const startup = () => {
       canvas.height = videoHeight;
       ctx = canvas.getContext('2d');
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-      
+
       $("#local-video-error").html("No error");
       main();
     })
