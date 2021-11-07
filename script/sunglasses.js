@@ -54,6 +54,7 @@ const startup = () => {
       video.srcObject = stream;
       video.play();
       $("#local-video-error").html("No error");
+      main();
     })
     .catch(function(err) {      
         $("#local-video-error").html("Got an error : " + err);
@@ -70,8 +71,6 @@ const startup = () => {
         streaming = true;
       }
     }, false);
-    
-    main();
   }
 
   
