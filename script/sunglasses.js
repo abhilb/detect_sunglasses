@@ -1,15 +1,25 @@
 
 let model;
+let sunglass_model;
 let ctx;
 let video;
 let videoHeight;
 let videoWidth;
 let canvas;
+let top_tag;
+let left_tag;
+let face_width_tag;
+let face_height_tag;
+let streaming = false;
+let face_canvas;
+let face_ctx;
+let cur_frame_canvas;
+let cur_frame_ctx;
 
 const renderPrediction = async () => {
 
   const returnTensors = false;
-  const flipHorizontal = true;
+  const flipHorizontal = false;
   const annotateBoxes = true;
   const predictions = await model.estimateFaces(
     video, returnTensors, flipHorizontal, annotateBoxes);
@@ -29,23 +39,16 @@ const renderPrediction = async () => {
       const start = predictions[i].topLeft;
       const end = predictions[i].bottomRight;
       const size = [end[0] - start[0], end[1] - start[1]];
-      console.log(start);
-      console.log(end);
-      console.log(size);
+      
+      top_tag.innerHTML = start[0];
+      left_tag.innerHTML = start[1];
+      face_width_tag.innerHTML = size[0];
+      face_height_tag.innerHTML = size[1];
 
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
       ctx.fillRect(start[0], start[1], size[0], size[1]);
 
-      if (annotateBoxes) {
-        const landmarks = predictions[i].landmarks;
-
-        ctx.fillStyle = 'blue';
-        for (let j = 0; j < landmarks.length; j++) {
-          const x = landmarks[j][0];
-          const y = landmarks[j][1];
-          ctx.fillRect(x, y, 5, 5);
-        }
-      }
+      face_ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
     }
   }
   else
@@ -59,16 +62,13 @@ const renderPrediction = async () => {
 async function main() {
   // Load the model.
   model = await blazeface.load();
-  console.log("Loaded the model");
+  //sunglass_model = await tf.loadLayersModel('tfjs/model.json');
   renderPrediction();
 }
   
 
 const startup = () => {
-    var width = 320;
-    var height = 0;
-    var streaming = false;
-  
+    
     video = document.getElementById('video');
     navigator.mediaDevices.getUserMedia({video: true, audio: false})
     .then(function(stream) {
@@ -77,14 +77,35 @@ const startup = () => {
           
       videoWidth = video.videoWidth;
       videoHeight = video.videoHeight;
-      video.width = videoWidth;
-      video.height = videoHeight;
+    
+      console.log(videoWidth);
+      console.log(videoHeight);
+      
+      face_canvas = document.getElementById("face");
+      face_canvas.width = 320;
+      face_canvas.height = 240;
+      face_ctx = face_canvas.getContext('2d');
+      
+      cur_frame_canvas = document.getElementById("current_frame");
+      cur_frame_canvas.width = videoWidth;
+      cur_frame_canvas.height = videoHeight;
+      cur_frame_ctx = cur_frame_canvas.getContext('2d');
     
       canvas = document.getElementById('output');
       canvas.width = videoWidth;
       canvas.height = videoHeight;
+      canvas.style.top = video.style.top;
+      canvas.style.left = video.style.left;
       ctx = canvas.getContext('2d');
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+
+      console.log("canvas width is " + canvas.width);
+      console.log("canvas height is " + canvas.height);
+
+      top_tag = document.getElementById("top");
+      left_tag = document.getElementById("left");
+      face_width_tag = document.getElementById("face_width");
+      face_height_tag = document.getElementById("face_height");
 
       console.log("Now load the model");
       main();
@@ -94,13 +115,16 @@ const startup = () => {
     });
   
     video.addEventListener('canplay', function(ev){
+      console.log("streaming value: " + streaming);
       if (!streaming) {
-        height = video.videoHeight / (video.videoWidth/width);      
-        if (isNaN(height)) {
-          height = width / (4/3);
-        }      
-        video.setAttribute('width', width);
-        video.setAttribute('height', height);
+        console.log(video.videoHeight);
+        console.log(video.videoWidth);
+        
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        cur_frame_canvas.width = video.videoWidth;
+        cur_frame_canvas.height = video.videoHeight;
         streaming = true;
       }
     }, false);
