@@ -26,31 +26,10 @@
         <div class="alert alert-info">
             Inference is done locally in the browser.
         </div>
-
-        <div class="row">
-            <div class="col-sm">
-                <table>
-                    <tr>
-                        <td>TOP</td>
-                        <td id="top"></td>
-                    </tr>
-                    <tr>
-                        <td>LEFT</td>
-                        <td id="left">
-                    </tr>
-                    </tr>
-                    <tr>
-                        <td>HEIGHT</td>
-                        <td id="face_height"></td>
-                    </tr>
-                    <tr>
-                        <td>WIDTH</td>
-                        <td id="face_width"></td>
-                    </tr>
-                </table>
-            </div>
+        <div>
+            <h4>HAS SUNGLASSES</h4>
+            <p id="has_sunglass"></p>
         </div>
-
         <div class="row">
             <div class="col">
                 <p id="local_video">Video</p>
@@ -59,24 +38,9 @@
                     <canvas id="output"></canvas>
                 </div>
             </div>
-            <div class="col">
-                <p>Current Frame</p>
-                <div>
-                    <canvas id="current_frame"></canvas>
-                </div>
-            </div>
-            <div class="col">
-                <p>Face</p>
-                <div>
-                    <canvas id="face"></canvas>
-                </div>
-            </div>
         </div>
-
-
     </div>
 
-    </div>
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
         integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

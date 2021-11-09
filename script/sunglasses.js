@@ -1,20 +1,14 @@
 
 let model;
 let sunglass_model;
+
 let ctx;
 let video;
-let videoHeight;
-let videoWidth;
+let height;
+let width = 320;
 let canvas;
-let top_tag;
-let left_tag;
-let face_width_tag;
-let face_height_tag;
 let streaming = false;
-let face_canvas;
-let face_ctx;
-let cur_frame_canvas;
-let cur_frame_ctx;
+let has_sunglass;
 
 const renderPrediction = async () => {
 
@@ -38,22 +32,31 @@ const renderPrediction = async () => {
 
       const start = predictions[i].topLeft;
       const end = predictions[i].bottomRight;
-      const size = [end[0] - start[0], end[1] - start[1]];
+      const top = start[0] / video.videoHeight * height;
+      const left = start[1] / video.videoWidth * width;
+      const bot = end[0] / video.videoHeight * height;
+      const right = end[1] / video.videoWidth * width;
+      const size = [bot - top, right - left];
       
-      top_tag.innerHTML = start[0];
-      left_tag.innerHTML = start[1];
-      face_width_tag.innerHTML = size[0];
-      face_height_tag.innerHTML = size[1];
-
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-      ctx.fillRect(start[0], start[1], size[0], size[1]);
-
-      face_ctx.drawImage(video, 0, 0, videoWidth, videoHeight);
+      ctx.fillRect(top, left, size[0], size[1]);
     }
   }
   else
   {
     console.log("No faces found");
+  }
+
+  const vid_frame = tf.browser.fromPixels(video).resizeBilinear([224, 224]).reshape([1, 224, 224, 3]);  
+  const sg_pred = sunglass_model.predict(vid_frame);
+  const v = sg_pred.argMax().dataSync()[0];
+  if(v === 0)
+  {
+    has_sunglass.innerHTML = "YES";
+  }
+  else
+  {
+    has_sunglass.innerHTML = "NO";
   }
 
   requestAnimationFrame(renderPrediction);
@@ -62,7 +65,7 @@ const renderPrediction = async () => {
 async function main() {
   // Load the model.
   model = await blazeface.load();
-  //sunglass_model = await tf.loadLayersModel('tfjs/model.json');
+  sunglass_model = await tf.loadGraphModel('tfjs/model.json');
   renderPrediction();
 }
   
@@ -74,40 +77,7 @@ const startup = () => {
     .then(function(stream) {
       video.srcObject = stream;
       video.play();
-          
-      videoWidth = video.videoWidth;
-      videoHeight = video.videoHeight;
-    
-      console.log(videoWidth);
-      console.log(videoHeight);
-      
-      face_canvas = document.getElementById("face");
-      face_canvas.width = 320;
-      face_canvas.height = 240;
-      face_ctx = face_canvas.getContext('2d');
-      
-      cur_frame_canvas = document.getElementById("current_frame");
-      cur_frame_canvas.width = videoWidth;
-      cur_frame_canvas.height = videoHeight;
-      cur_frame_ctx = cur_frame_canvas.getContext('2d');
-    
-      canvas = document.getElementById('output');
-      canvas.width = videoWidth;
-      canvas.height = videoHeight;
-      canvas.style.top = video.style.top;
-      canvas.style.left = video.style.left;
-      ctx = canvas.getContext('2d');
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
 
-      console.log("canvas width is " + canvas.width);
-      console.log("canvas height is " + canvas.height);
-
-      top_tag = document.getElementById("top");
-      left_tag = document.getElementById("left");
-      face_width_tag = document.getElementById("face_width");
-      face_height_tag = document.getElementById("face_height");
-
-      console.log("Now load the model");
       main();
     })
     .catch(function(err) {      
@@ -119,12 +89,24 @@ const startup = () => {
       if (!streaming) {
         console.log(video.videoHeight);
         console.log(video.videoWidth);
-        
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
 
-        cur_frame_canvas.width = video.videoWidth;
-        cur_frame_canvas.height = video.videoHeight;
+        height = video.videoHeight / (video.videoWidth/width);
+        video.setAttribute('width', width);
+        video.setAttribute('height', height);
+
+        has_sunglass = document.getElementById('has_sunglass');
+                  
+        canvas = document.getElementById('output');      
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.top = video.style.top;
+        canvas.style.left = video.style.left;
+        ctx = canvas.getContext('2d');
+        ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+
+        console.log("canvas width is " + canvas.width);
+        console.log("canvas height is " + canvas.height);
+        console.log("Now load the model");
         streaming = true;
       }
     }, false);
