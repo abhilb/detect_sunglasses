@@ -3,3 +3,4 @@ yarn.lock
 .lsp/.cache/data.mdb
 .lsp/.cache/lock.mdb
 node_modules/.yarn-integrity
+.vim/
