@@ -9,6 +9,10 @@ let width = 320;
 let canvas;
 let streaming = false;
 let has_sunglass;
+let face_canvas;
+let face_ctx;
+let dummy_canvas;
+let dummy_ctx;
 
 const renderPrediction = async () => {
 
@@ -40,6 +44,30 @@ const renderPrediction = async () => {
       
       ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
       ctx.fillRect(top, left, size[0], size[1]);
+
+      dummy_ctx.drawImage(video, 0, 0, width, height);
+      const face_crop = dummy_ctx.getImageData(left, top, size[1], size[0]);
+
+      face_canvas.width = size[1];
+      face_canvas.height = size[0];
+      console.log(face_canvas.width + " " + face_canvas.height);
+      face_ctx.drawImage(video, left, top, size[1], size[2], 0, 0, 224, 224);
+
+      let face_image = tf.browser.fromPixels(face_canvas).resizeBilinear([224, 224]);
+      
+      const vid_frame = face_image.reshape([1, 224, 224, 3]);  
+      const sg_pred = sunglass_model.predict(vid_frame);
+      sg_pred.print();
+      const v = sg_pred.argMax().dataSync();
+      console.log(v);
+      if(v[0] === 0)
+      {
+        has_sunglass.innerHTML = "YES";
+      }
+      else
+      {
+        has_sunglass.innerHTML = "NO";
+      }
     }
   }
   else
@@ -47,17 +75,7 @@ const renderPrediction = async () => {
     console.log("No faces found");
   }
 
-  const vid_frame = tf.browser.fromPixels(video).resizeBilinear([224, 224]).reshape([1, 224, 224, 3]);  
-  const sg_pred = sunglass_model.predict(vid_frame);
-  const v = sg_pred.argMax().dataSync()[0];
-  if(v === 0)
-  {
-    has_sunglass.innerHTML = "YES";
-  }
-  else
-  {
-    has_sunglass.innerHTML = "NO";
-  }
+  
 
   requestAnimationFrame(renderPrediction);
 };
@@ -107,6 +125,15 @@ const startup = () => {
         console.log("canvas width is " + canvas.width);
         console.log("canvas height is " + canvas.height);
         console.log("Now load the model");
+
+        dummy_canvas = document.getElementById("dummy");
+        dummy_ctx = dummy_canvas.getContext("2d");
+        dummy_canvas.width = width;
+        dummy_canvas.height = height;
+
+        face_canvas = document.getElementById("face");
+        face_ctx = face_canvas.getContext("2d");
+        
         streaming = true;
       }
     }, false);
