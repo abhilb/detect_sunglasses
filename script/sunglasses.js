@@ -16,6 +16,8 @@ let dummy_ctx;
 
 const renderPrediction = async () => {
 
+  $("#model_load_alert").alert("close");
+  
   const returnTensors = false;
   const flipHorizontal = false;
   const annotateBoxes = true;
