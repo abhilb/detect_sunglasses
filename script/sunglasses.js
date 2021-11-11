@@ -42,8 +42,9 @@ const renderPrediction = async () => {
       const right = end[1] / video.videoWidth * width;
       const size = [bot - top, right - left];
       
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-      ctx.fillRect(top, left, size[0], size[1]);
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#38f';
+      ctx.strokeRect(top, left, size[0], size[1]);
 
       dummy_ctx.drawImage(video, 0, 0, width, height);
       const face_crop = dummy_ctx.getImageData(top, left, size[0], size[1]);

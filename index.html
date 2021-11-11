@@ -10,16 +10,20 @@
     <title>Detect Sunglasses</title>
     <style>
         #video {
-            /* position: absolute; */
+            position: absolute;
             border: 3px solid #a32ed1;
         }
 
         #output {
-            /* position: absolute; */
+            position: absolute;
             z-index: 10;
         }
 
         #dummy {
+            display: none;
+        }
+
+        #face {
             display: none;
         }
 
@@ -48,17 +52,8 @@
                 </div>
             </div>
         </div>
-        <hr>
-
-        <div class="row">
-            <canvas id="dummy"></canvas>
-        </div>
-
-        <div class="row">
-            <h4>Face</h4>
-            <canvas id="face" width="224" height="224"></canvas>
-            <hr>
-        </div>
+        <canvas id="dummy"></canvas>
+        <canvas id="face" width="224" height="224"></canvas>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js"
