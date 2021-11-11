@@ -49,22 +49,26 @@ const renderPrediction = async () => {
       const face_crop = dummy_ctx.getImageData(top, left, size[0], size[1]);
 
       face_ctx.clearRect(0, 0, 224, 224);
-      face_ctx.putImageData(face_crop, 0, 0);
+      const xscale = 224 / size[0];
+      const yscale = 224 / size[1];
+      //face_ctx.scale(xscale, yscale);
+      face_ctx.drawImage(dummy_canvas, top, left, size[0], size[1], 0, 0, 224, 224);
       let face_image = tf.browser.fromPixels(face_canvas).resizeBilinear([224, 224]);
       
       const vid_frame = face_image.reshape([1, 224, 224, 3]);  
       const sg_pred = sunglass_model.predict(vid_frame);
       sg_pred.print();
-      const v = sg_pred.argMax().dataSync();
-      console.log(v);
-      if(v[0] === 0)
+      const v = sg_pred.dataSync();
+      //console.log(v);
+      if(v[1] > 0.8)
       {
-        has_sunglass.innerHTML = "YES";
+        has_sunglass.innerHTML = "YES " + (v[1] * 100) + "%";
       }
       else
       {
-        has_sunglass.innerHTML = "NO";
+        has_sunglass.innerHTML = "NO ";
       }
+
     }
   }
   else
