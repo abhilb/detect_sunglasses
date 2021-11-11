@@ -46,13 +46,10 @@ const renderPrediction = async () => {
       ctx.fillRect(top, left, size[0], size[1]);
 
       dummy_ctx.drawImage(video, 0, 0, width, height);
-      const face_crop = dummy_ctx.getImageData(left, top, size[1], size[0]);
+      const face_crop = dummy_ctx.getImageData(top, left, size[0], size[1]);
 
-      face_canvas.width = size[1];
-      face_canvas.height = size[0];
-      console.log(face_canvas.width + " " + face_canvas.height);
-      face_ctx.drawImage(video, left, top, size[1], size[2], 0, 0, 224, 224);
-
+      face_ctx.clearRect(0, 0, 224, 224);
+      face_ctx.putImageData(face_crop, 0, 0);
       let face_image = tf.browser.fromPixels(face_canvas).resizeBilinear([224, 224]);
       
       const vid_frame = face_image.reshape([1, 224, 224, 3]);  
