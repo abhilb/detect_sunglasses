@@ -9,4 +9,6 @@ A simple model to check if a person is wearing a sunglass or not?
 - **Tensorflow2** framework was used for training this model. 
 - Model is then converted using tensorflow.js so that the inference could be done on the browser itself.
 
-[Demo](https://abhilashbabuj.com/detect_sunglasses.html)
+---
+
+[Demo](https://abhilashbabuj.com/detect_sunglasses/)
